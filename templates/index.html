@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Information</title>
+</head>
+
+<body>
+    <h1>IP Address Information</h1>
+    <button onclick="handleSubmit()">Get My IP Info</button>
+
+    <ul id="ipInfoList">
+        <!-- IP Info will be populated dynamically -->
+    </ul>
+
+    <script>
+        async function handleSubmit() {
+            const ipInfoList = document.getElementById('ipInfoList');
+            ipInfoList.innerHTML = '';
+
+            try {
+                // Fetch data
+                const response = await fetch('/get-ip-info');
+                const data = await response.json();
+
+                if (data.error) {
+                    ipInfoList.innerHTML = `<li><strong>Error:</strong> ${data.error}</li>`;
+                } else {
+                    // Populate the list with the fetched data
+                    ipInfoList.innerHTML = `
+                        <li><strong>Public IPv4:</strong> ${data.ipv4}</li>
+                        <li><strong>Public IPv6:</strong> ${data.ipv6 || 'Not available'}</li>
+                        <li><strong>Country:</strong> ${data.country} (${data.country_code})</li>
+                        <li><strong>Region:</strong> ${data.region}</li>
+                        <li><strong>City:</strong> ${data.city}</li>
+                        <li><strong>Provider/ISP:</strong> ${data.provider}</li>
+                        <li><strong>ASN of ISP:</strong> ${data.asn}</li>
+                        <li><strong>Latitude:</strong> ${data.latitude}</li>
+                        <li><strong>Longitude:</strong> ${data.longitude}</li>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error fetching IP information:', error);
+                ipInfoList.innerHTML = `<li><strong>Error fetching IP information:</strong> ${error.message}</li>`;
+            }
+        }
+    </script>
+</body>
+
+</html>
