@@ -1,18 +1,16 @@
-# IT26210 Project Activity 3
+# IT26210 Project Activity 3 - Social Coding
 
-# Social Coding
-
-IT26210 - 4ITE
+IT26210 - 4ITE\
 AY 2024 - 2025
 
-## Group Members
+### Group Members
 
-Del Rosario, Yna Sophia
-Esteban, Aliah DR.
-Ji, Ira Rayzel S.
+Del Rosario, Yna Sophia\
+Esteban, Aliah DR.\
+Ji, Ira Rayzel S.\
 Palomo, Jakob Michael M.
 
-# Setup Instructions
+## Setup Instructions
 
 ### Step 1 - Clone repository
 
@@ -44,7 +42,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-# Run the App
+## Run the App
 
 ```bash
 python app.py
