@@ -19,6 +19,11 @@
       .container {
         margin-top: 50px;
       }
+      .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
       h1 {
         color: #00ffcc;
         font-weight: 700;
@@ -132,14 +137,16 @@
             <div>Loading...</div>
           </div>
 
-          <button
-            id="copyButton"
-            class="btn btn-copy"
-            style="display: none"
-            onclick="copyToClipboard()"
-          >
-            Copy to Clipboard
-          </button>
+          <div class="center-container">
+            <button
+              id="copyButton"
+              class="btn btn-copy"
+              style="display: none"
+              onclick="copyToClipboard()"
+            >
+              Copy to Clipboard
+            </button>
+          </div>
 
           <ul id="ipInfoList" class="mt-4">
             <!-- IP Info will be populated dynamically -->
