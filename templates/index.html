@@ -9,123 +9,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
-    <style>
-      body {
-        background-color: #1e1e1e;
-        color: #ffffff;
-        font-family: "Roboto", sans-serif;
-      }
-
-      .container {
-        margin-top: 50px;
-      }
-
-      .center-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      h1 {
-        color: #00ffcc;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .btn-tech {
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        transition:
-          all 0.4s ease-in-out,
-          transform 0.2s;
-        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
-      }
-
-      .btn-tech:hover {
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        box-shadow: 0 0 20px rgba(0, 123, 255, 0.7);
-        transform: translateY(-2px);
-      }
-
-      .btn-copy {
-        background: linear-gradient(90deg, #00ccff, #0072ff);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        margin-top: 10px;
-        transition:
-          all 0.4s ease-in-out,
-          transform 0.2s;
-        box-shadow: 0 4px 10px rgba(0, 204, 255, 0.5);
-      }
-
-      .btn-copy:hover {
-        background: linear-gradient(90deg, #0072ff, #00ccff);
-        box-shadow: 0 0 20px rgba(0, 204, 255, 0.7);
-        transform: translateY(-2px);
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 20px;
-      }
-
-      li {
-        padding: 15px 20px;
-        background-color: #2b2b2b;
-        border: 1px solid #444;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        transition:
-          background-color 0.3s,
-          transform 0.3s;
-      }
-
-      li:hover {
-        background-color: #007bff;
-        transform: translateY(-2px);
-      }
-
-      li strong {
-        color: #00ffcc;
-      }
-
-      .loading {
-        color: #00ffcc;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100px;
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 5px solid #00ffcc;
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/styles.css" />
   </head>
 
   <body>
@@ -140,8 +25,8 @@
             placeholder="Enter IP Address"
             aria-label="IP Address"
           />
-          <div class="d-grid gap-2 col-6 mx-auto mt-2">
-            <button class="btn btn-tech" onclick="handleSubmit()">Get IP Info</button>
+          <div class="d-grid gap-2 col-6 mx-auto mt-4">
+            <button class="btn btn-tech" onclick="handleSubmit()">Get IP Information</button>
           </div>
 
           <div id="loadingIndicator" class="loading" style="display: none">
@@ -149,16 +34,14 @@
             <div>Loading...</div>
           </div>
 
-          <div class="center-container">
-            <button
-              id="copyButton"
-              class="btn btn-copy"
-              style="display: none"
-              onclick="copyToClipboard()"
-            >
-              Copy to Clipboard
-            </button>
-          </div>
+          <button
+            id="copyButton"
+            class="btn btn-copy"
+            style="display: none"
+            onclick="copyToClipboard()"
+          >
+            Copy to Clipboard
+          </button>
 
           <ul id="ipInfoList" class="mt-4">
             <!-- IP Info will be populated dynamically -->
@@ -201,7 +84,6 @@
           if (data.error) {
             ipInfoList.innerHTML = `<li><strong>Error:</strong> ${data.error}</li>`;
           } else {
-            // Populate the list with the fetched data
             ipInfoList.innerHTML = `
               <li><strong>Public IPv4:</strong> ${data.ipv4 || "Not available"}</li>
               <li><strong>Public IPv6:</strong> ${data.ipv6 || "Not available"}</li>
