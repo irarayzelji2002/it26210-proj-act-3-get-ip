@@ -1,39 +1,57 @@
-from flask import Flask, jsonify, render_template, redirect, url_for
+from flask import Flask, jsonify, render_template, redirect, url_for, request
 import requests
 
 app = Flask(__name__)
 
-# API endpoint for ipapi.co
-api_url = "https://ipapi.co/json/"
-
-def get_ip_info():
+def get_ip_info(ip=None):
     """Getting IP Information"""
     try:
+        api_url = f"https://ipapi.co/{ip}/json/" if ip else "https://ipapi.co/json/"
         response = requests.get(api_url)
-        data = response.json()
+        
+        # Print the response content for debugging
+        print("API Response:", response.text)
 
-        ipv4 = data.get("ip")
-        ipv6 = data.get("ipv6")
-        country = data.get("country_name")
-        country_code = data.get("country_code")
-        region = data.get("region")
-        city = data.get("city")
-        provider = data.get("org")
-        asn = data.get("asn")
-        latitude = data.get("latitude")
-        longitude = data.get("longitude")
+        # Check for a successful response
+        if response.status_code != 200:
+            return {"error": "Unable to fetch IP information."}
 
+        try:
+            data = response.json()
+        except ValueError:
+            return {"error": "Invalid JSON response from API."}
+
+        # Check if the response contains an error
+        if data.get("error"):
+            if data.get("reason") == "Reserved IP Address":
+                # If there's an error and it's a reserved IP, handle accordingly
+                return {
+                    "ipv4": None if data.get('version') == "IPv4" else None,
+                    "ipv6": data.get("ip") if data.get('version') == "IPv6" else None,
+                    "country": "Reserved",
+                    "country_code": None,
+                    "region": "Reserved",
+                    "city": "Reserved",
+                    "provider": "Reserved",
+                    "asn": "Reserved",
+                    "latitude": "Reserved",
+                    "longitude": "Reserved",
+                }
+            else:
+                return {"error": data.get("reason")}
+
+        # If the response is successful, extract IP information
         ip_info = {
-            "ipv4": ipv4,
-            "ipv6": ipv6,
-            "country": country,
-            "country_code": country_code,
-            "region": region,
-            "city": city,
-            "provider": provider,
-            "asn": asn,
-            "latitude": latitude,
-            "longitude": longitude,
+            "ipv4": data.get("ip") if data.get('version') == "IPv4" else None,
+            "ipv6": data.get("ip") if data.get('version') == "IPv6" else None,
+            "country": data.get("country_name"),
+            "country_code": data.get("country_code"),
+            "region": data.get("region"),
+            "city": data.get("city"),
+            "provider": data.get("org"),
+            "asn": data.get("asn"),
+            "latitude": data.get("latitude"),
+            "longitude": data.get("longitude"),
         }
 
         return ip_info
@@ -43,7 +61,10 @@ def get_ip_info():
 
 @app.route('/get-ip-info', methods=['GET'])
 def ip_info_route():
-    ip_info = get_ip_info()
+    # Get the IP address from the query parameter
+    ip = request.args.get('ip')
+    # Call Get IP Info function
+    ip_info = get_ip_info(ip)
     return jsonify(ip_info)
 
 @app.route('/')

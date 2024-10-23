@@ -40,7 +40,10 @@ source .venv/bin/activate
 
 ```bash
 pip install -r requirements.txt
+deactivate
 ```
+
+#### Make sure dependencies are solved and using the correct Python Interpreter.
 
 Go to template/app.py
 
@@ -48,6 +51,10 @@ Ctrl+Shift+P, then select Python Interpreter in .venv\Scripts\python.exe
 
 Run the app (python app.py)
 If module not found, switch to your computer's Python Interpreter and switch back to .venv\Scripts\python.exe
+
+```bash
+npm install
+```
 
 ## Run the App
 
