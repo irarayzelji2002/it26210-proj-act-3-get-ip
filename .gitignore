@@ -1,2 +1,16 @@
+# Dependency directories
 .venv
 node_modules
+
+# Test directories
+/test/__pycache__/
+/test/*.pyc
+/test/*.pyo
+/test/*.pyd
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.nox
