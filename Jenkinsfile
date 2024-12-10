@@ -18,15 +18,15 @@ pipeline {
                     // Check if the repository exists
                     if (!fileExists("${env.WORKSPACE}/.git")) {
                         echo "Repository not cloned. Cloning now..."
-                        git branch: 'main', url: 'https://github.com/irarayzelji2002/it26210-proj-act-3-get-ip.git'
+                        bat 'git clone https://github.com/irarayzelji2002/it26210-proj-act-3-get-ip.git'
                     } else {
                         // Check if there are any new commits by fetching from the remote
                         echo "Repository already exists. Checking for new commits..."
-                        sh 'git fetch --dry-run origin main'  // Dry run fetch to see if changes exist
-                        def changesAvailable = sh(script: 'git rev-list --count HEAD...origin/main', returnStdout: true).trim()
+                        bat 'git fetch --dry-run origin main'  // Dry run fetch to see if changes exist
+                        def changesAvailable = bat(script: 'git rev-list --count HEAD...origin/main', returnStdout: true).trim()
                         if (changesAvailable != '0') {
                             echo "New commits found. Pulling changes..."
-                            sh 'git pull origin main'  // Pull the latest changes
+                            bat 'git pull origin main'  // Pull the latest changes
                         } else {
                             echo "No new commits. Skipping pull."
                         }
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Check if requirements.txt has been modified
-                    def changes = sh(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
+                    def changes = bat(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
                     if (changes.contains("requirements.txt")) {
                         env.REINSTALL_REQUIREMENTS = "true"
                     } else {
@@ -56,8 +56,8 @@ pipeline {
                     if (env.REINSTALL_REQUIREMENTS == "true") {
                         echo "Reinstalling dependencies..."
                         // Set up the virtual environment and install dependencies
-                        sh 'python -m venv $VENV_DIR'
-                        sh 'source $VENV_DIR/Scripts/activate && pip install -r requirements.txt'
+                        bat 'python -m venv $VENV_DIR'
+                        bat 'call $VENV_DIR\\Scripts\\activate.bat && pip install -r requirements.txt'
                     } else {
                         echo "Skipping installation, dependencies are already installed."
                     }
@@ -69,10 +69,10 @@ pipeline {
             steps {
                 script {
                     // Run Nox only if necessary
-                    def testChanges = sh(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
+                    def testChanges = bat(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
                     if (testChanges) {
                         echo "Changes detected, running tests..."
-                        sh 'nox'
+                        bat 'nox'
                     } else {
                         echo "No changes in code, skipping tests."
                     }
