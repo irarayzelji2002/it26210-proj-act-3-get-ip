@@ -68,11 +68,17 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run Nox only if necessary
+                    // Check for changes in the repository (use bat for Windows)
                     def testChanges = bat(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
                     if (testChanges) {
                         echo "Changes detected, running tests..."
-                        bat 'nox'
+                        
+                        // Activate virtual environment and run Nox
+                        bat '''
+                            call $VENV_DIR\\Scripts\\activate.bat
+                            where nox
+                            nox
+                        '''
                     } else {
                         echo "No changes in code, skipping tests."
                     }
