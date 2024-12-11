@@ -58,6 +58,22 @@ If module not found, switch to your computer's Python Interpreter and switch bac
 npm install
 ```
 
+## Updating Dependencies
+
+On Windows
+
+```bash
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+On macOS/Linux:
+
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ## Run the App
 
 ```bash
