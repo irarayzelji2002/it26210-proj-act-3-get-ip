@@ -3,21 +3,26 @@ import subprocess
 
 @nox.session
 def tests(session):
-    # Check if the requirements are already installed
     def is_requirements_installed():
         try:
-            # Check if the required packages are installed
+            # Get the list of installed packages
             installed_packages = subprocess.check_output(
-                [session.python, "-m", "pip", "freeze"]
-            ).decode("utf-8")
-            # Check if the required packages are listed in the installed packages
+                [session.python, "-m", "pip", "freeze"], universal_newlines=True
+            ).splitlines()
+
+            # Load required packages
             with open("requirements.txt", "r") as f:
-                required_packages = f.read()
-                for package in required_packages.splitlines():
-                    if package not in installed_packages:
-                        return False
+                required_packages = f.read().splitlines()
+
+            # Ensure all required packages are installed
+            for package in required_packages:
+                # Check if package (ignoring version) exists in installed packages
+                if not any(installed.startswith(package.split("==")[0]) for installed in installed_packages):
+                    return False
+
             return True
-        except subprocess.CalledProcessError:
+        except Exception as e:
+            session.error(f"Error while checking installed packages: {e}")
             return False
 
     # Install dependencies only if they're not already installed

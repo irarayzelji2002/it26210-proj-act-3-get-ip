@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        VENV_DIR = '.venv'
+        REPO_DIR = "${env.WORKSPACE}/it26210-proj-act-3-get-ip"
     }
 
     stages {
@@ -16,17 +16,27 @@ pipeline {
             steps {
                 script {
                     // Check if the repository exists
-                    if (!fileExists("${env.WORKSPACE}/.git")) {
+                    if (!fileExists("${env.WORKSPACE}/it26210-proj-act-3-get-ip/.git")) {
                         echo "Repository not cloned. Cloning now..."
-                        bat 'git clone https://github.com/irarayzelji2002/it26210-proj-act-3-get-ip.git'
+                        bat "git clone https://github.com/irarayzelji2002/it26210-proj-act-3-get-ip.git"
                     } else {
-                        // Check if there are any new commits by fetching from the remote
+                        // Dry run fetch to see if changes exist then pull the latest changes
                         echo "Repository already exists. Checking for new commits..."
-                        bat 'git fetch --dry-run origin main'  // Dry run fetch to see if changes exist
-                        def changesAvailable = bat(script: 'git rev-list --count HEAD...origin/main', returnStdout: true).trim()
+                        bat """
+                            cd ${REPO_DIR}
+                            git fetch --dry-run origin main
+                        """
+                        def changesAvailable = bat(script: 
+                        """
+                            cd ${REPO_DIR}
+                            git rev-list --count HEAD...origin/main
+                        """, returnStdout: true).trim()
                         if (changesAvailable != '0') {
                             echo "New commits found. Pulling changes..."
-                            bat 'git pull origin main'  // Pull the latest changes
+                            bat """
+                                cd ${REPO_DIR}
+                                git pull origin main
+                            """
                         } else {
                             echo "No new commits. Skipping pull."
                         }
@@ -38,8 +48,10 @@ pipeline {
         stage('Check for Changes in requirements.txt') {
             steps {
                 script {
-                    // Check if requirements.txt has been modified
-                    def changes = bat(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
+                    def changes = bat(script: """
+                        cd ${REPO_DIR}
+                        git diff --name-only origin/main...HEAD
+                    """, returnStdout: true).trim()
                     if (changes.contains("requirements.txt")) {
                         env.REINSTALL_REQUIREMENTS = "true"
                     } else {
@@ -56,8 +68,14 @@ pipeline {
                     if (env.REINSTALL_REQUIREMENTS == "true") {
                         echo "Reinstalling dependencies..."
                         // Set up the virtual environment and install dependencies
-                        bat 'python -m venv $VENV_DIR'
-                        bat 'call $VENV_DIR\\Scripts\\activate.bat && pip install -r requirements.txt'
+                        bat """
+                            cd "${REPO_DIR}"
+                            python -m venv "${REPO_DIR}\\.venv"
+                        """
+                        bat """
+                            cd "${REPO_DIR}"
+                            call "${REPO_DIR}\\.venv\\Scripts\\activate.bat" && pip install -r "${REPO_DIR}\\requirements.txt"
+                        """
                     } else {
                         echo "Skipping installation, dependencies are already installed."
                     }
@@ -69,16 +87,20 @@ pipeline {
             steps {
                 script {
                     // Check for changes in the repository (use bat for Windows)
-                    def testChanges = bat(script: "git diff --name-only origin/main...HEAD", returnStdout: true).trim()
+                    def testChanges = bat(script: """
+                        cd "${REPO_DIR}"
+                        git diff --name-only origin/main...HEAD
+                    """, returnStdout: true).trim()
                     if (testChanges) {
                         echo "Changes detected, running tests..."
                         
                         // Activate virtual environment and run Nox
-                        bat '''
-                            call $VENV_DIR\\Scripts\\activate.bat
+                        bat """
+                            cd "${REPO_DIR}"
+                            call "${REPO_DIR}\\.venv\\Scripts\\activate.bat"
                             where nox
                             nox
-                        '''
+                        """
                     } else {
                         echo "No changes in code, skipping tests."
                     }
@@ -89,7 +111,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'nox_output/*', allowEmptyArchive: true
+            archiveArtifacts artifacts: "${REPO_DIR}/nox_output/*", allowEmptyArchive: true
         }
         success {
             echo 'Tests passed!'
