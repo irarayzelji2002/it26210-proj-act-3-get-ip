@@ -45,40 +45,19 @@ pipeline {
             }
         }
 
-        stage('Check for Changes in requirements.txt') {
-            steps {
-                script {
-                    def changes = bat(script: """
-                        cd ${REPO_DIR}
-                        git diff --name-only origin/main...HEAD
-                    """, returnStdout: true).trim()
-                    if (changes.contains("requirements.txt")) {
-                        env.REINSTALL_REQUIREMENTS = "true"
-                    } else {
-                        env.REINSTALL_REQUIREMENTS = "false"
-                    }
-                    echo "Changes in requirements.txt: ${env.REINSTALL_REQUIREMENTS}"
-                }
-            }
-        }
-
         stage('Set Up Environment') {
             steps {
                 script {
-                    if (env.REINSTALL_REQUIREMENTS == "true") {
-                        echo "Reinstalling dependencies..."
-                        // Set up the virtual environment and install dependencies
-                        bat """
-                            cd "${REPO_DIR}"
-                            python -m venv "${REPO_DIR}\\.venv"
-                        """
-                        bat """
-                            cd "${REPO_DIR}"
-                            call "${REPO_DIR}\\.venv\\Scripts\\activate.bat" && pip install -r "${REPO_DIR}\\requirements.txt"
-                        """
-                    } else {
-                        echo "Skipping installation, dependencies are already installed."
-                    }
+                    echo "Reinstalling dependencies..."
+                    // Set up the virtual environment and install dependencies
+                    bat """
+                        cd "${REPO_DIR}"
+                        python -m venv "${REPO_DIR}\\.venv"
+                    """
+                    bat """
+                        cd "${REPO_DIR}"
+                        call "${REPO_DIR}\\.venv\\Scripts\\activate.bat" && pip install -r "${REPO_DIR}\\requirements.txt"
+                    """
                 }
             }
         }
