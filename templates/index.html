@@ -80,24 +80,59 @@
         try {
           // Fetch data
           const response = await fetch(`/get-ip-info${ipInput ? `?ip=${ipInput}` : ""}`);
+
+          if (!response.ok) throw new Error(`Validation Error`);
           const data = await response.json();
           console.log("response:", data);
 
           if (data.error) {
             ipInfoList.innerHTML = `<li><strong>Error:</strong> ${data.error}</li>`;
           } else {
-            ipInfoList.innerHTML = `
-              <li><strong>Public IPv4:</strong> ${data.ipv4 || "Not available"}</li>
-              <li><strong>Public IPv6:</strong> ${data.ipv6 || "Not available"}</li>
-              <li><strong>Country:</strong> ${data.country ? `${data.country} ${data.country_code ? ` (${data.country_code})` : ""}` : "Not available"}</li>
-              <li><strong>Region:</strong> ${data.region || "Not available"}</li>
-              <li><strong>City:</strong> ${data.city || "Not available"}</li>
-              <li><strong>Provider/ISP:</strong> ${data.provider || "Not available"}</li>
-              <li><strong>ASN of ISP:</strong> ${data.asn || "Not available"}</li>
-              <li><strong>Latitude:</strong> ${data.latitude || "Not available"}</li>
-              <li><strong>Longitude:</strong> ${data.longitude || "Not available"}</li>
-            `;
-            copyButton.style.display = "block";
+            const ipInfo = data.ip_info || {};
+            const ipReputation = data.ip_reputation || {};
+
+            // Display errors for ip_info or ip_reputation
+            if (ipInfo.error) {
+              ipInfoList.innerHTML += `<li><strong>IP Info Error:</strong> ${ipInfo.error}</li>`;
+            } else {
+              ipInfoList.innerHTML = `
+                <li><strong>Public IPv4:</strong> ${ipInfo.ipv4 || "Not available"}</li>
+                <li><strong>Public IPv6:</strong> ${ipInfo.ipv6 || "Not available"}</li>
+                <li><strong>Country:</strong> ${ipInfo.country ? `${ipInfo.country} ${ipInfo.country_code ? ` (${ipInfo.country_code})` : ""}` : "Not available"}</li>
+                <li><strong>Region:</strong> ${ipInfo.region || "Not available"}</li>
+                <li><strong>City:</strong> ${ipInfo.city || "Not available"}</li>
+                <li><strong>Provider/ISP:</strong> ${ipInfo.provider || "Not available"}</li>
+                <li><strong>ASN of ISP:</strong> ${ipInfo.asn || "Not available"}</li>
+                <li><strong>Latitude:</strong> ${ipInfo.latitude || "Not available"}</li>
+                <li><strong>Longitude:</strong> ${ipInfo.longitude || "Not available"}</li>
+              `;
+            }
+
+            if (ipReputation.error) {
+              ipInfoList.innerHTML += `<li><strong>IP Reputation Error:</strong> ${ipReputation.error}</li>`;
+            } else {
+              ipInfoList.innerHTML += `
+                <li><strong>Hostname:</strong> ${ipReputation.hostname || "Not available"}</li>
+                <li><strong>Timezone:</strong> ${ipReputation.timezone || "Not available"}</li>
+                <li><strong>Fraud Score:</strong> ${ipReputation.fraud_score || "Not available"}</li>
+                <li><strong>Has a recent abuse:</strong> ${ipReputation.recent_abuse || "Not available"}</li>
+                <li><strong>Is a crawler:</strong> ${ipReputation.is_crawler || "Not available"}</li>
+                <li><strong>Is a proxy:</strong> ${ipReputation.is_proxy || "Not available"}</li>
+                <li><strong>Is a VPN:</strong> ${ipReputation.is_vpn || "Not available"}</li>
+                <li><strong>Is an Active VPN:</strong> ${ipReputation.is_active_vpn || "Not available"}</li>
+                <li><strong>Is a TOR:</strong> ${ipReputation.is_tor || "Not available"}</li>
+                <li><strong>Is an Active TOR:</strong> ${ipReputation.is_active_tor || "Not available"}</li>
+                <li><strong>Is mobile:</strong> ${ipReputation.is_mobile || "Not available"}</li>
+                <li><strong>Bot status:</strong> ${ipReputation.bot_status || "Not available"}</li>
+              `;
+            }
+
+            // Show the copy button if there is valid data to copy
+            if (!ipInfoList.innerHTML.includes("Error:") && ipInfoList.innerHTML.trim() !== "") {
+              copyButton.style.display = "block";
+            } else {
+              copyButton.style.display = "none";
+            }
           }
         } catch (error) {
           console.error("Error fetching IP information:", error);

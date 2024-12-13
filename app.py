@@ -1,7 +1,11 @@
 from flask import Flask, jsonify, render_template, redirect, url_for, request
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+cors = CORS(app, origins="*")
+
+IPQS_API_KEY = "D8LyW5f11ItL1azaN2GIZAHZFuNL3ryh"
 
 def get_ip_info(ip=None):
     """Getting IP Information"""
@@ -59,13 +63,68 @@ def get_ip_info(ip=None):
     except Exception as e:
         return {"error": str(e)}
 
+def get_ip_reputation(ip=None):
+    if not ip:
+        return {"error": "IP address is required"}
+
+    # Make API call to IPQualityScore
+    api_url = f"https://ipqualityscore.com/api/json/ip/{IPQS_API_KEY}/{ip}"
+    
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise HTTP errors
+        data = response.json()
+        
+        if not data.get("success"):
+            return {"error": data.get("message")}
+        
+        # Parse and return relevant fields
+        return {
+            "hostname": data.get("host"),
+            "isp": data.get("ISP"),
+            "organization": data.get("organization"),
+            "zip_code": data.get("zip_code"),
+            "asn": data.get("asn"),
+            "timezone": data.get("timezone"),
+            "fraud_score": data.get("fraud_score"),
+            "is_crawler": data.get("is_crawler"),
+            "is_proxy": data.get("proxy"),
+            "is_vpn": data.get("vpn"),
+            "is_active_vpn": data.get("active_vpn"),
+            "is_tor": data.get("tor"),
+            "is_active_tor": data.get("active_tor"),
+            "is_mobile": data.get("mobile"),
+            "recent_abuse": data.get("recent_abuse"),
+            "bot_status": data.get("bot_status"),
+            "connection_type": data.get("connection_type"), # Premium required.
+            "abuse_velocity": data.get("abuse_velocity"),   # Premium required.
+        }
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+
 @app.route('/get-ip-info', methods=['GET'])
 def ip_info_route():
     # Get the IP address from the query parameter
     ip = request.args.get('ip')
-    # Call Get IP Info function
+    if not ip:
+        return jsonify({"error": "IP address is required."}), 400
+
+    # Fetch IP info
     ip_info = get_ip_info(ip)
-    return jsonify(ip_info)
+    if "error" in ip_info and isinstance(ip_info["error"], str):
+        return jsonify({"ip_info": ip_info, "ip_reputation": {"error": "Skipped due to IP info error"}}), 200
+
+    # Fetch IP reputation
+    ip_reputation = get_ip_reputation(ip)
+    if "error" in ip_reputation and isinstance(ip_reputation["error"], str):
+        return jsonify({"ip_info": ip_info, "ip_reputation": ip_reputation}), 200
+
+    # Combine the results if no errors
+    combined_data = {
+        "ip_info": ip_info,
+        "ip_reputation": ip_reputation,
+    }
+    return jsonify(combined_data)
 
 @app.route('/')
 def index():
