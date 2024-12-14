@@ -108,7 +108,7 @@ def get_ip_reputation(ip=None):
         print("API Response (IP Reputation):", response.text)
         
         if not data.get("success"):
-            return {"error": data.get("message")}
+            return {"error": data.get("message") or "Unable to fetch IP reputation."}
         
         # Parse and return relevant fields
         return {
@@ -168,5 +168,3 @@ def show_get_ip_page():
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
-
-    
