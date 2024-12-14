@@ -60,7 +60,7 @@
           <ul id="ipInfoList" class="mt-4">
             <!-- IP Info will be populated dynamically -->
             <!-- <div
-              class="d-flex justify-content-between align-self-stretch align-items-center gap-0 column-gap-3"
+              class="d-flex justify-content-between align-self-stretch align-items-center gap-0 column-gap-2"
             >
               <li class="flex-fill">
                 <strong>Latitude:</strong>
@@ -171,17 +171,17 @@
               ipInfoList.innerHTML += `<li><strong>IP Info Error:</strong> ${ipInfo.error}</li>`;
             } else {
               ipInfoList.innerHTML = `
-                <li><strong>Public IPv4:</strong> ${ipInfo.ipv4 || "Not available"}</li>
-                <li><strong>Public IPv6:</strong> ${ipInfo.ipv6 || "Not available"}</li>
+                <li><strong>Public IPv4:</strong> ${ipInfo.ipv4 ?? "Not available"}</li>
+                <li><strong>Public IPv6:</strong> ${ipInfo.ipv6 ?? "Not available"}</li>
                 <li><strong>Country:</strong> ${ipInfo.country ? `${ipInfo.country} ${ipInfo.country_code ? ` (${ipInfo.country_code})` : ""}` : "Not available"}</li>
-                <li><strong>Region:</strong> ${ipInfo.region || "Not available"}</li>
-                <li><strong>City:</strong> ${ipInfo.city || "Not available"}</li>
-                <li><strong>Provider/ISP:</strong> ${ipInfo.provider || "Not available"}</li>
-                <li><strong>ASN of ISP:</strong> ${ipInfo.asn || "Not available"}</li>
-                <li><strong>Latitude:</strong> ${ipInfo.latitude || "Not available"}</li>
-                <li><strong>Longitude:</strong> ${ipInfo.longitude || "Not available"}</li>
+                <li><strong>Region:</strong> ${ipInfo.region ?? "Not available"}</li>
+                <li><strong>City:</strong> ${ipInfo.city ?? "Not available"}</li>
+                <li><strong>Provider/ISP:</strong> ${ipInfo.provider ?? "Not available"}</li>
+                <li><strong>ASN of ISP:</strong> ${ipInfo.asn ?? "Not available"}</li>
+                <li><strong>Latitude:</strong> ${ipInfo.latitude ?? "Not available"}</li>
+                <li><strong>Longitude:</strong> ${ipInfo.longitude ?? "Not available"}</li>
                 <div
-                  class="d-flex justify-content-between align-self-stretch align-items-center gap-0 column-gap-3"
+                  class="d-flex justify-content-between align-self-stretch align-items-center gap-0 column-gap-2"
                 >
                   <li class="flex-fill">
                     <strong>Latitude:</strong>
@@ -209,18 +209,18 @@
               ipInfoList.innerHTML += `<li><strong>IP Reputation Error:</strong> ${ipReputation.error}</li>`;
             } else {
               ipInfoList.innerHTML += `
-                <li><strong>Hostname:</strong> ${ipReputation.hostname || "Not available"}</li>
-                <li><strong>Timezone:</strong> ${ipReputation.timezone || "Not available"}</li>
-                <li><strong>Fraud Score:</strong> ${ipReputation.fraud_score || "Not available"}</li>
-                <li><strong>Has a recent abuse:</strong> ${ipReputation.recent_abuse || "Not available"}</li>
-                <li><strong>Is a crawler:</strong> ${ipReputation.is_crawler || "Not available"}</li>
-                <li><strong>Is a proxy:</strong> ${ipReputation.is_proxy || "Not available"}</li>
-                <li><strong>Is a VPN:</strong> ${ipReputation.is_vpn || "Not available"}</li>
-                <li><strong>Is an Active VPN:</strong> ${ipReputation.is_active_vpn || "Not available"}</li>
-                <li><strong>Is a TOR:</strong> ${ipReputation.is_tor || "Not available"}</li>
-                <li><strong>Is an Active TOR:</strong> ${ipReputation.is_active_tor || "Not available"}</li>
-                <li><strong>Is mobile:</strong> ${ipReputation.is_mobile || "Not available"}</li>
-                <li><strong>Bot status:</strong> ${ipReputation.bot_status || "Not available"}</li>
+                <li><strong>Hostname:</strong> ${ipReputation.hostname ?? "Not available"}</li>
+                <li><strong>Timezone:</strong> ${ipReputation.timezone ?? "Not available"}</li>
+                <li><strong>Fraud Score:</strong> ${ipReputation.fraud_score ?? "Not available"}</li>
+                <li><strong>Has a recent abuse:</strong> ${ipReputation.recent_abuse === true ? "Yes" : ipReputation.recent_abuse === false ? "No" : "Not available"}</li>
+                <li><strong>Is a crawler:</strong> ${ipReputation.is_crawler === true ? "Yes" : ipReputation.is_crawler === false ? "No" : "Not available"}</li>
+                <li><strong>Is a proxy:</strong> ${ipReputation.is_proxy === true ? "Yes" : ipReputation.is_proxy === false ? "No" : "Not available"}</li>
+                <li><strong>Is a VPN:</strong> ${ipReputation.is_vpn === true ? "Yes" : ipReputation.is_vpn === false ? "No" : "Not available"}</li>
+                <li><strong>Is an Active VPN:</strong> ${ipReputation.is_active_vpn === true ? "Yes" : ipReputation.is_active_vpn === false ? "No" : "Not available"}</li>
+                <li><strong>Is a TOR:</strong> ${ipReputation.is_tor === true ? "Yes" : ipReputation.is_tor === false ? "No" : "Not available"}</li>
+                <li><strong>Is an Active TOR:</strong> ${ipReputation.is_active_tor === true ? "Yes" : ipReputation.is_active_tor === false ? "No" : "Not available"}</li>
+                <li><strong>Is mobile:</strong> ${ipReputation.is_mobile === true ? "Yes" : ipReputation.is_mobile === false ? "No" : "Not available"}</li>
+                <li><strong>Bot status:</strong> ${ipReputation.bot_status === true ? "Yes" : ipReputation.bot_status === false ? "No" : "Not available"}</li>
               `;
             }
 
